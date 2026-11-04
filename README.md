@@ -318,12 +318,12 @@ Ejemplos:
 
 ```
 feature/setup
-feature/sql
 feature/habitaciones
 feature/incidencias
 feature/login
-feature/huespedes
-feature/reservas
+feature/huesped
+feature/reservas-listado
+feature/reservas-formularios
 ```
 
 ---
