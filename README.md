@@ -25,8 +25,8 @@ El sistema cubre operaciones CRUD completas y simula un entorno real de gestión
 
 ## ⚙️ Requisitos previos:
 
-- Java JDK 8+
-- Apache Tomcat 9+
+- Java JDK 11+
+- Apache Tomcat 9 (no compatible con Tomcat 10+, que usa `jakarta` en lugar de `javax`)
 - MySQL 8.0
 - Maven
 - IDE (Eclipse)
@@ -38,7 +38,8 @@ El sistema cubre operaciones CRUD completas y simula un entorno real de gestión
 1. Clonar el repositorio:
 
 ```
-git clone https://github.com/PrimeraEdicionFlexible/ProyectoFinalEquipoL.git
+git clone https://github.com/JorgeMPM/ProyectoHotelAppEquipo.git
+cd ProyectoHotelAppEquipo/SpringHotelApp
 ```
 
 2. Importar el proyecto en el IDE (Eclipse como Maven project)
@@ -73,7 +74,7 @@ ORDEN CORRECTO PARA EJECUTAR LOS SCRIPTS:
 5. hoteldb_reservas.sql  
 6. hoteldb_incidencias.sql  
 7. hoteldb_datos_usuarios.sql
-8. hoterdb_datos_huespedes.sql
+8. hoteldb_datos_huespedes.sql
 9. hoteldb_datos_habitaciones.sql
 10. hoteldb_datos_incidencias.sql
 11. hoteldb_datos_reservas.sql
@@ -81,7 +82,7 @@ ORDEN CORRECTO PARA EJECUTAR LOS SCRIPTS:
 <!--IA: se pidió a chat gpt que hiciera responsive la imagen luego en las otras copié y pegué cambiando la imagen en cada una-->
 
 <p align="center">
-  <img src="docs/images/diagrama ER BBDD.png" style="max-width: 100%; height: auto;" />
+  <img src="SpringHotelApp/docs/images/diagrama ER BBDD.png" style="max-width: 100%; height: auto;" />
   <br>
   <em>diagrama ER</em>
 </p>
@@ -91,7 +92,7 @@ Los scripts SQL se encuentran en la carpeta /sql del proyecto.
 <h2 align="center">Tablas de la BBDD</h2>
 
 <p align="center">
-  <img src="docs/images/tabla usuarios.png" width="500" />
+  <img src="SpringHotelApp/docs/images/tabla usuarios.png" width="500" />
   <br>
   <em>tabla usuarios</em>
 </p>
@@ -99,7 +100,7 @@ Los scripts SQL se encuentran en la carpeta /sql del proyecto.
 <br>
 
 <p align="center">
-  <img src="docs/images/tabla habitaciones.png" width="500" />
+  <img src="SpringHotelApp/docs/images/tabla habitaciones.png" width="500" />
   <br>
   <em>tabla habitaciones</em>
 </p>
@@ -107,7 +108,7 @@ Los scripts SQL se encuentran en la carpeta /sql del proyecto.
 <br><br>
 
 <p align="center">
-  <img src="docs/images/tabla huespedes.png" width="500" />
+  <img src="SpringHotelApp/docs/images/tabla huespedes.png" width="500" />
   <br>
   <em>tabla huespedes</em>
 </p>
@@ -115,7 +116,7 @@ Los scripts SQL se encuentran en la carpeta /sql del proyecto.
 <br><br>
 
 <p align="center">
-  <img src="docs/images/tabla incidencias.png" width="500" />
+  <img src="SpringHotelApp/docs/images/tabla incidencias.png" width="500" />
   <br>
   <em>tabla incidencias</em>
 </p>
@@ -123,7 +124,7 @@ Los scripts SQL se encuentran en la carpeta /sql del proyecto.
 <br>
 
 <p align="center">
-  <img src="docs/images/tabla reservas.png" width="500" />
+  <img src="SpringHotelApp/docs/images/tabla reservas.png" width="500" />
   <br>
   <em>tabla reservas</em>
 </p>
@@ -132,7 +133,7 @@ Los scripts SQL se encuentran en la carpeta /sql del proyecto.
 <h2 align="center">Relaciones de las tablas</h2>
 
 <p align="center">
-  <img src="docs/images/fk de incidencias.png" width="500" />
+  <img src="SpringHotelApp/docs/images/fk de incidencias.png" width="500" />
   <br>
   <em>FK de incidencias</em>
 </p>
@@ -140,7 +141,7 @@ Los scripts SQL se encuentran en la carpeta /sql del proyecto.
 <br>
 
 <p align="center">
-  <img src="docs/images/fk de reservas.png" width="500" />
+  <img src="SpringHotelApp/docs/images/fk de reservas.png" width="500" />
   <br>
   <em>FK de reservas</em>
 </p>
@@ -178,14 +179,14 @@ Arquitectura en capas:
 ```
 es.accenture.config       → configuración
 es.accenture.controller   → gestión de peticiones HTTP
-es.accenture.dao          → es el acceso a BBDD, lo usa Services por medio de Controller
+es.accenture.dao          → acceso a BBDD, lo usa el Service
 es.accenture.entity       → entidades de la bbdd
 es.accenture.exceptions   → excepciones personalizadas
 es.accenture.interfaces   → son las interfaces que definen los contratos de métodos que se deben cumplir
-es.accenture.services     → PAQUETE SERVICES: es la lógica, se manda a DAO para las consultas a BBDD
+es.accenture.service      → lógica de negocio, usa el DAO para las consultas a BBDD
 ```
 <p align="center">
-  <img src="docs/images/estructura de paquetes.png" style="width: 50%; max-width: 900px; height: auto;" />
+  <img src="SpringHotelApp/docs/images/estructura de paquetes.png" style="width: 50%; max-width: 900px; height: auto;" />
   <br>
   <em>imagen de los paquetes del proyecto</em>
 </p>
@@ -202,24 +203,25 @@ HibernateConfig   → configura conexión a base de datos + ORM + transacciones
 ### PAQUETE CONTROLLER: recibe las peticiones HTTP, llama al service y da la respuesta
 
 ```
+InicioController → gestiona la navegación a la pantalla principal
 LoginController → gestiona el login, el logout y la sesión de usuario
 HabitacionController → gestiona las peticiones del CRUD de habitaciones
 IncidenciaController → gestiona las peticiones del CRUD de incidencias
 HuespedController → gestiona las peticiones del CRUD de huéspedes
-ReservaController → gestiona las peticiones del CRUD de reservas
+ReservasController → gestiona las peticiones del CRUD de reservas
 ```
 
-### PAQUETE DAO: es el acceso a BBDD, lo usa Services para el acceso a datos
+### PAQUETE DAO: es el acceso a BBDD, lo usa el Service para el acceso a datos
 
 ```
-LoginDao → establece la lógica del acceso a los datos de la funcionalidad Login
+UsuarioDao → establece la lógica del acceso a los datos de usuarios (Login)
 HabitacionDao → establece la lógica del acceso a los datos de la funcionalidad Habitaciones
 IncidenciaDao → establece la lógica del acceso a los datos de la funcionalidad Incidencias
 HuespedDao → establece la lógica del acceso a los datos de la funcionalidad Huespedes
-ReservaDao → establece la lógica del acceso a los datos de la funcionalidad Reservas
+ReservasDao → establece la lógica del acceso a los datos de la funcionalidad Reservas
 ```
 
-### PAQUETE ENTITIES: entidades de la bbdd
+### PAQUETE ENTITY: entidades de la bbdd
 
 ```
 Habitacion → es representación de la tabla habitaciones
@@ -252,20 +254,20 @@ IHuespedDao → interfaz que establece el contrato de los métodos de HuespedDao
 IHuespedService → interfaz que establece el contrato de los métodos de HuespedService
 IIncidenciaDao → interfaz que establece el contrato de los métodos de IncidenciaDao
 IIncidenciaService → interfaz que establece el contrato de los métodos de IncidenciaService
-ILoginDao → interfaz que establece el contrato de los métodos de LoginDao
-ILoginService → interfaz que establece el contrato de los métodos de LoginService
-IReservaDao → interfaz que establece el contrato de los métodos de ReservaDao
-IReservaService → interfaz que establece el contrato de los métodos de ReservaService
+IUsuarioDao → interfaz que establece el contrato de los métodos de UsuarioDao
+IUsuarioService → interfaz que establece el contrato de los métodos de UsuarioService
+IReservasDao → interfaz que establece el contrato de los métodos de ReservasDao
+IReservasService → interfaz que establece el contrato de los métodos de ReservasService
 ```
 
-### PAQUETE SERVICES: es la lógica, se manda a DAO para las consultas a BBDD
+### PAQUETE SERVICE: es la lógica de negocio, usa el DAO para las consultas a BBDD
 
 ```
-HabitacionService → servicio que se encarga de la lógica de Service
+HabitacionService → servicio que se encarga de la lógica de Habitaciones
 HuespedService → servicio que se encarga de la lógica de Huesped
 IncidenciaService → servicio que se encarga de la lógica de Incidencia
-LoginService → servicio que se encarga de la lógica de Login
-ReservaService → servicio que se encarga de la lógica de Reservas
+UsuarioService → servicio que se encarga de la lógica de usuarios (Login)
+ReservasService → servicio que se encarga de la lógica de Reservas
 ```
 
 ### VISTAS: (van en WebInf, Vistas menos Login que va en WebApp)
@@ -335,7 +337,7 @@ Merge a develop
 Merge final a main  
 
 <p align="center">
-  <img src="docs/images/dibujo git.png" style="max-width: 100%; height: auto;" />
+  <img src="SpringHotelApp/docs/images/dibujo git.png" style="max-width: 100%; height: auto;" />
   <br>
   <em>imagen simplificada del flujo de trabajo</em>
 </p>
@@ -366,7 +368,7 @@ Se resolvieron conflictos principalmente en:
 	Se resuelve con el editor manual (notepad)<br>
 <br>
 <p align="center">
-  <img src="docs/images/errores github.png" style="max-width: 100%; height: auto;" />
+  <img src="SpringHotelApp/docs/images/errores github.png" style="max-width: 100%; height: auto;" />
   <br>
   <em>Captura de algunos de los errores que marcaba Github</em>
 </p>
@@ -375,7 +377,7 @@ Se resolvieron conflictos principalmente en:
 	Motivo:<br>
 	Porque la rama feature/habitaciones necesitaba actualizarse con los cambios recientes de 	develop<br>
 	Porque develop ya contenía modificaciones en vistas jsp, controladores y navegación 	realizadas por otras ramas<br>
-	Porque ambas ramas modificaban archivos relacionados con habitaciones y vistas copartidas 	(las minúsculas de rename)<br>
+	Porque ambas ramas modificaban archivos relacionados con habitaciones y vistas compartidas 	(las minúsculas de rename)<br>
 	Solución:<br>
 	Se deja todo lo de develop que es lo más actualizado<br>
 	Se adaptan las vistas y todo lo afectado<br>
@@ -383,13 +385,13 @@ Se resolvieron conflictos principalmente en:
 	Se resuelve con el editor manual (notepad)<br>
 		<br>
 	<p align="center">
-  <img src="docs/images/conflicto 2a.png" style="max-width: 100%; height: auto;" />
+  <img src="SpringHotelApp/docs/images/conflicto 2a.png" style="max-width: 100%; height: auto;" />
   <br>
   <em>captura de pantalla del conflicto</em>
 </p>
 	<br>
 		<p align="center">
-  <img src="docs/images/conflicto 2b.png" style="max-width: 100%; height: auto;" />
+  <img src="SpringHotelApp/docs/images/conflicto 2b.png" style="max-width: 100%; height: auto;" />
   <br>
   <em>captura de pantalla del conflicto</em>
 </p>
@@ -408,21 +410,21 @@ Se resolvieron conflictos principalmente en:
 	Se resuelve con el editor manual (notepad)<br>
 		<br>
 	<p align="center">
-  <img src="docs/images/conflicto 3c.png" style="max-width: 100%; height: auto;" />
+  <img src="SpringHotelApp/docs/images/conflicto 3c.png" style="max-width: 100%; height: auto;" />
   <br><br><br>
   <br>
   <em>captura de pantalla del conflicto</em>
 </p>
 	<br>
 		<p align="center">
-  <img src="docs/images/conflicto 3d.png" style="max-width: 100%; height: auto;" />
+  <img src="SpringHotelApp/docs/images/conflicto 3d.png" style="max-width: 100%; height: auto;" />
   <br><br><br>
   <br>
   <em>captura de pantalla del conflicto</em>
 </p>
 	<br>
 		<p align="center">
-  <img src="docs/images/conflicto 3e.png" style="max-width: 100%; height: auto;" />
+  <img src="SpringHotelApp/docs/images/conflicto 3e.png" style="max-width: 100%; height: auto;" />
   <br><br><br>
   <br>
   <em>captura de pantalla del conflicto</em>
@@ -442,7 +444,7 @@ Se resolvieron conflictos principalmente en:
 		<br>
 - Conflicto 5:<br>
 	Motivo:<br>
-	Porque después de resolver el conflicto principal de incidencias seguían existiendo archivos 	pendientes y cambios sin sincronizar correctamente (aunque los habíamos borrado!!!)<br>
+	Porque después de resolver el conflicto principal de incidencias seguían existiendo archivos 	pendientes y cambios sin sincronizar correctamente (aunque ya se habían borrado)<br>
 	Porque algunos cambios de la rama incidencias-clean seguían entrando en conflicto con 	develop tras el merge inicial<br>
 	Porque seguían las diferencias en vistas jsp reconociendo archivos que borrábamos una y otra 	vez (los de las minúsculas del rename)<br>
 	Porque HibernateConfig.java tenía cambios en configuración e imports (eran comentarios 	distintos de cada uno)<br>
@@ -457,10 +459,10 @@ Se resolvieron conflictos principalmente en:
 	Motivo:<br>
 	Porque Reservas contenía cambios en vistas jsp (mayúsculas) que también habían sido 	modificados en develop<br>
 	Porque varias ramas trabajaban simultáneamente sobre archivos compartidos relacionados con 	reservas y menús de navegación (nos duplicó Reservas, interfaces y otros)<br>
-	Porque seguían existiendo archivos antiguos que habíamos eliminado mil veces -_- y 	diferencias derivadas de los rename realizados anteriormente<br>
+	Porque seguían existiendo archivos antiguos que ya se habían eliminado varias veces y 	diferencias derivadas de los rename realizados anteriormente<br>
 	Solución:<br>
 	Se crea la rama feature/reservas-clean para intentar hacer el merge limpio (consejo de Chat 	GPT) pero da los mismos problemas y se tiene que hacer manual poco a poco.<br>
-	Se priorizan los cambios de develop porque es la más actualizadazbrZ
+	Se priorizan los cambios de develop porque es la más actualizada<br>
 	Se meten manualmente solo los cambios compatibles de Reservas<br>
 	Se editan algunos comentarios que también daban conflicto por tenerlos puestos los dos 	diferentes<br>
 	Se mantuvieron los renames de las jsp y se borraron localmente las antiguas<br>
@@ -491,7 +493,7 @@ Se resolvieron conflictos principalmente en:
 
 ## Controller
 - Recibe la petición (@Controller)
-- Llama al servicie
+- Llama al service
 
 ## Service
 - Valida datos básicos
@@ -617,7 +619,7 @@ ENTITY Usuario: -- sin relaciones, que esta no tiene
 
 @Entity
 @Table(name="usuarios")
-@IdUsuario
+@Id
 @GeneratedValue(strategy=GenerationType.IDENTITY)
 @Enumerated(EnumType.STRING)
 
@@ -663,8 +665,8 @@ idReserva                             - @Column(name="id_reserva",nullable=false
 fechaEntrada                          - @Column(name="fecha_entrada",nullable=false)    - Date
 @DateTimeFormat(pattern="yyyy-MM-dd") - anotación para fecha
 fechaSalida                           - @Column(name="fecha_salida",nullable=false)     - Date
-tipoPension                           - @Column(name="tipo_pension")                    - ENUM (PENDIENTE,CONFIRMADA,CANCELADA)
-estadoReserva                         - @Column(name="estado_reserva")                  - ENUM (ALOJAMIENTO,MEDIA,COMPLETA)
+tipoPension                           - @Column(name="tipo_pension")                    - ENUM (ALOJAMIENTO,MEDIA,COMPLETA)
+estadoReserva                         - @Column(name="estado_reserva")                  - ENUM (PENDIENTE,CONFIRMADA,CANCELADA)
 numeroHuespedes                       - @Column(name="numero_huespedes",nullable=false) - INT
 observaciones                         - @Column(name="observaciones")                   - String
 ```
@@ -677,33 +679,36 @@ observaciones                         - @Column(name="observaciones")           
 recepcionista / recep ---> recep123
 supervisor    / super ---> admin123
 ```
-
-
-  <img src="docs/images/datos usuarios.png" style="max-width: 100%; height: auto;" />
+<p align="center">
+  <img src="SpringHotelApp/docs/images/datos usuarios.png" style="max-width: 100%; height: auto;" />
   <br>
   <br>
   <em>script creacion credenciales usuarios</em>
 </p>
 	<br>
-	  <img src="docs/images/datos huespedes.png" style="max-width: 100%; height: auto;" />
+<p align="center">
+  <img src="SpringHotelApp/docs/images/datos huespedes.png" style="max-width: 100%; height: auto;" />
   <br>
   <br>
   <em>script creacion huespedes de prueba</em>
 </p>
 	<br>
-	<img src="docs/images/datos habitaciones.png" style="max-width: 100%; height: auto;" />
+<p align="center">
+  <img src="SpringHotelApp/docs/images/datos habitaciones.png" style="max-width: 100%; height: auto;" />
   <br>
   <br>
   <em>script creacion habitaciones de prueba</em>
 </p>
 	<br>
-	<img src="docs/images/datos reservas.png" style="max-width: 100%; height: auto;" />
+<p align="center">
+  <img src="SpringHotelApp/docs/images/datos reservas.png" style="max-width: 100%; height: auto;" />
   <br>
   <br>
   <em>script creacion reservas de prueba</em>
 </p>
 	<br>
-	<img src="docs/images/datos incidencias.png" style="max-width: 100%; height: auto;" />
+<p align="center">
+  <img src="SpringHotelApp/docs/images/datos incidencias.png" style="max-width: 100%; height: auto;" />
   <br>
   <br>
   <em>script creacion incidencias de prueba</em>
@@ -720,7 +725,7 @@ Ver carpeta /docs:
 
 Proyecto (PDF)
 
-- [proyecto (PDF)](docs/proyecto.pdf)
+- [proyecto (PDF)](SpringHotelApp/docs/proyecto.pdf)
 
 ---
 
@@ -728,7 +733,7 @@ Proyecto (PDF)
 
 ## 🤖 Uso de inteligencia artificial Alumno A
 ### Herramientas utilizadas
-**Alumno A — Javier Roldán Pomareta
+**Alumno A — Javier Roldán Pomareta**
 - ChatGPT (versión: 5.5)
 
 Usos:
@@ -736,7 +741,7 @@ Usos:
 - Confirmar validez de las clases de configuración rápidamente.
 - Resolver la falta de una dependencia del POM.
 - Confirmar resto de dependencias del POM.
-- Buscar fallos de sintáxis
+- Buscar fallos de sintaxis
 - Pedir explicaciones de funcionamientos
 - Pedir explicaciones de buenas prácticas
 - Pedir explicaciones de apuntes y temarios que no entendía
@@ -759,7 +764,7 @@ Usos:
 <tr>
 <td>POM</td>
 <td>Sí</td>
-<td>En el Eclipse de mis compañeros saltaba un error en el POM (no me acuerdo cuál era) pero a mi sí me funcionaba, faltaba la dependencia de plugging de Maven porque yo uso una versión diferente porque aunque tengo todas instaladas me gusta más, se copió y se pegó y se comprobó que funcionaba</br>
+<td>En el Eclipse de mis compañeros saltaba un error en el POM (no me acuerdo cuál era) pero a mi sí me funcionaba, faltaba la dependencia de plugin de Maven porque yo uso una versión diferente porque aunque tengo todas instaladas me gusta más, se copió y se pegó y se comprobó que funcionaba</br>
 Tengo estas dependencias que he ido buscando en foros y copiando de otros proyectos para mi proyecto es un proyecto de Spring MVC que vamos a usar Hibernate, mysql (y no me acuerdo qué más le puse en el prompt) dime si me falta alguna y me dijo que no.
 </td>
 </tr>
@@ -837,7 +842,6 @@ Estos son los css que ha puesto mi compañero en las vistas del proyecto, dime e
 <br>
 </td>
 </tr>
-</table>
 
 <tr>
 <td>Documentación (Javadoc)</td>
@@ -859,7 +863,7 @@ Puedo explicar qué hace cada fragmento marcado como IA, justificar por qué enc
 
 ## 🤖 Uso de inteligencia artificial Alumno B
 ### Herramientas utilizadas
-**Alumno B — Jorge Martín Pérez-Nieto
+**Alumno B — Jorge Martín Pérez Moreno**
 - ChatGPT (versión: 5.5)
 
 Usos:
@@ -867,7 +871,7 @@ Usos:
 - Confirmar validez de las clases de configuración rápidamente.
 - Resolver la falta de una dependencia del POM.
 - Confirmar resto de dependencias del POM.
-- Buscar fallos de sintáxis
+- Buscar fallos de sintaxis
 - Pedir explicaciones de funcionamientos
 - Pedir explicaciones de buenas prácticas
 - Pedir explicaciones de apuntes y temarios que no entendía
@@ -882,7 +886,7 @@ Usos:
 
 <table>
 <tr>
-<th>Componente A</th>
+<th>Componente B</th>
 <th>¿Has usado IA?</th>
 <th>¿Para qué?</th>
 </tr>
@@ -890,7 +894,7 @@ Usos:
 <tr>
 <td>POM</td>
 <td>Sí</td>
-<td>En Eclipse me dió un error en el POM, porque Javi tiene otra version de Eclipse, faltaba la dependencia de plugging de Maven</br>
+<td>En Eclipse me dio un error en el POM, porque Javi tiene otra version de Eclipse, faltaba la dependencia de plugin de Maven</br>
 </td>
 </tr>
 
@@ -915,8 +919,8 @@ Usos:
 
 <tr>
 <td>Entidad / DAO / Controller / vistas de Incidencias</td>
-<td>Sí/NO</td>
-<td>...</td>
+<td>NO</td>
+<td></td>
 </tr>
 
 <tr>
@@ -967,7 +971,6 @@ Estos son los css que ha puesto mi compañero en las vistas del proyecto, dime e
 <br>
 </td>
 </tr>
-</table>
 
 <tr>
 <td>Documentación (Javadoc)</td>
@@ -984,92 +987,80 @@ Declaro que entiendo todo el código que entrego.
 
 Puedo explicar qué hace cada fragmento marcado como IA, justificar por qué encaja en el proyecto y modificarlo durante la defensa si fuera necesario.
 
-— Alumno B: Jorge Martín Pérez-Nieto
+— Alumno B: Jorge Martín Pérez Moreno
 
 ---
 
 ## Capturas de pantalla:
 
 <p align="center">
-  <img src="docs/images/login.png" width="500" />
+  <img src="SpringHotelApp/docs/images/login.png" width="500" />
   <br>
   <em>Captura de pantalla de login</em>
 </p>
 <br>
 <p align="center">
-  <img src="docs/images/principal.png" width="500" />
+  <img src="SpringHotelApp/docs/images/principal.png" width="500" />
   <br>
   <em>Captura de pantalla de principal</em>
 </p>
 <br>
 <p align="center">
-  <img src="docs/images/lista habitaciones.png" width="500" />
+  <img src="SpringHotelApp/docs/images/lista habitaciones.png" width="500" />
   <br>
   <em>Captura de pantalla de lista habitaciones</em>
 </p>
 <br>
 <p align="center">
-  <img src="docs/images/detalle habitación.png" width="500" />
-  <br>
-  <em>Captura de pantalla de detalle habitación</em>
-</p>
-<br>
-<p align="center">
-  <img src="docs/images/editar habitación.png" width="500" />
-  <br>
-  <em>Captura de pantalla de editar habitación</em>
-</p>
-<br>
-<p align="center">
-  <img src="docs/images/huespedes.png" width="500" />
+  <img src="SpringHotelApp/docs/images/huespedes.png" width="500" />
   <br>
   <em>Captura de pantalla de huespedes</em>
 </p>
 <br>
 <p align="center">
-  <img src="docs/images/detalle huesped.png" width="500" />
+  <img src="SpringHotelApp/docs/images/detalle huesped.png" width="500" />
   <br>
   <em>Captura de pantalla de detalle huesped</em>
 </p>
 <br>
 <p align="center">
-  <img src="docs/images/editar huesped.png" width="500" />
+  <img src="SpringHotelApp/docs/images/editar huesped.png" width="500" />
   <br>
   <em>Captura de pantalla de editar huesped</em>
 </p>
 <br>
 <p align="center">
-  <img src="docs/images/reservas.png" width="500" />
+  <img src="SpringHotelApp/docs/images/reservas.png" width="500" />
   <br>
   <em>Captura de pantalla de reservas</em>
 </p>
 <br>
 <p align="center">
-  <img src="docs/images/detalle reserva.png" width="500" />
+  <img src="SpringHotelApp/docs/images/detalle reserva.png" width="500" />
   <br>
   <em>Captura de pantalla de detalle reserva</em>
 </p>
 <br>
 <p align="center">
-  <img src="docs/images/editar reserva.png" width="500" />
+  <img src="SpringHotelApp/docs/images/editar reserva.png" width="500" />
   <br>
   <em>Captura de pantalla de editar reserva</em>
 </p>
 <br>
 <p align="center">
-  <img src="docs/images/incidencias.png" width="500" />
+  <img src="SpringHotelApp/docs/images/incidencias.png" width="500" />
   <br>
   <em>Captura de pantalla de incidencias</em>
 </p>
 <br>
 <p align="center">
-  <img src="docs/images/detalle incidencia.png" width="500" />
+  <img src="SpringHotelApp/docs/images/detalle incidencia.png" width="500" />
   <br>
   <em>Captura de pantalla de detalle incidencia</em>
 </p>
 <br>
 <p align="center">
-  <img src="docs/images/editar incidencia.png" width="500" />
+  <img src="SpringHotelApp/docs/images/editar incidencia.png" width="500" />
   <br>
   <em>Captura de pantalla de editar incidencia</em>
 </p>
